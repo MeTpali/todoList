@@ -21,15 +21,15 @@ class NavigationManager {
   //   _navigator.pushNamed(RouteNames.taskForm);
   // }
 
-  Future<List<dynamic>?> openInfo(TaskWidgetConfiguration? configuration) {
-    return _navigator.pushNamed<List<dynamic>?>(
+  Future<bool?> openInfo(TaskWidgetConfiguration? configuration) {
+    return _navigator.pushNamed<bool?>(
       RouteNames.taskForm,
       arguments: configuration,
     );
   }
 
-  Future<List<dynamic>?> openTaskForm() {
-    return _navigator.pushNamed<List<dynamic>?>(
+  Future<bool?> openTaskForm() {
+    return _navigator.pushNamed<bool?>(
       RouteNames.taskForm,
     );
   }

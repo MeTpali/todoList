@@ -21,11 +21,13 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
     super.initState();
     _model = TaskFormModel();
     if (widget.config != null) {
-      _model.taskText = widget.config!.task;
+      _model.id = widget.config!.id;
+      _model.isCompleted = widget.config!.isCompleted;
+      _model.taskText = widget.config!.description;
       _model.relevance = widget.config!.relevance;
       _model.isChanging = true;
       if (widget.config!.date != null) {
-        _model.changeDateValue(widget.config!.date!, TaskFormWidget);
+        _model.setDateValue(widget.config!.date!);
         _model.setDate();
       }
     }
@@ -36,7 +38,7 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
     return TaskFormWidgetProvider(
       model: _model,
       child: TaskFormBody(
-        text: widget.config == null ? '' : widget.config!.task,
+        text: widget.config == null ? '' : widget.config!.description,
       ),
     );
   }
@@ -87,8 +89,11 @@ class _TaskFormBodyState extends State<TaskFormBody> {
         ),
         actions: [
           TextButton(
-            onPressed:
-                model!.taskText.isNotEmpty ? () => _saveTask(model) : null,
+            onPressed: model!.taskText.isNotEmpty
+                ? model.isChanging
+                    ? () => _updateTask(model)
+                    : () => _saveTask(model)
+                : null,
             child: Text(
               S.of(context).get("save").toUpperCase(),
               style: TextStyle(
@@ -137,10 +142,12 @@ class _TaskFormBodyState extends State<TaskFormBody> {
     NavigationManager.instance.pop();
   }
 
-  void _saveTask(
-    TaskFormModel model,
-  ) {
+  void _saveTask(TaskFormModel model) {
     model.saveTask(TaskFormBody);
+  }
+
+  void _updateTask(TaskFormModel model) {
+    model.updateTask(TaskFormBody);
   }
 }
 

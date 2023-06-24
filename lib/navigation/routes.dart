@@ -28,7 +28,7 @@ abstract class RoutesBuilder {
         );
 
       case RouteNames.taskForm:
-        return MaterialPageRoute<List<dynamic>?>(
+        return MaterialPageRoute<bool?>(
           builder: (_) => TaskFormWidget(
             config: settings.arguments as TaskWidgetConfiguration?,
           ),

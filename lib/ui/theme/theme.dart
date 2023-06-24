@@ -13,9 +13,8 @@ class ToDoListTheme {
 
   static Color get mainScreenScaffoldColor =>
       _islLghtBrightness ? const Color(0xFFF7F6F2) : const Color(0xFF161618);
-  static Color get mainScreenAppBarColor => _islLghtBrightness
-      ? const Color.fromARGB(255, 249, 249, 249)
-      : const Color(0xFF161618);
+  static Color get mainScreenAppBarColor =>
+      _islLghtBrightness ? const Color(0xFFF7F6F2) : const Color(0xFF161618);
   static Color get mainScreenListColor =>
       _islLghtBrightness ? const Color(0xFFFFFFFF) : const Color(0xFF252528);
   static Color get mainScreenCompletedColor =>
@@ -47,9 +46,8 @@ class ToDoListTheme {
 
   static Color get taskFormScaffoldColor =>
       _islLghtBrightness ? const Color(0xFFF7F6F2) : const Color(0xFF161618);
-  static Color get taskFormAppBarColor => _islLghtBrightness
-      ? const Color.fromARGB(255, 249, 249, 249)
-      : const Color(0xFF161618);
+  static Color get taskFormAppBarColor =>
+      _islLghtBrightness ? const Color(0xFFF7F6F2) : const Color(0xFF161618);
   static Color get taskFormAppBarIconColor =>
       _islLghtBrightness ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
   static Color get taskFormAppBarSaveColor =>

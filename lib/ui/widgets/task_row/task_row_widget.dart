@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_school/navigation/navigation.dart';
 import 'package:todo_list_school/ui/theme/theme.dart';
 import 'package:todo_list_school/ui/widgets/main_screen/main_screen_widget_model.dart';
-import 'package:todo_list_school/ui/widgets/task_form/date.dart';
 
 enum Relevance {
   none,
@@ -12,16 +11,16 @@ enum Relevance {
 }
 
 class TaskWidgetConfiguration {
-  int index;
-  final String task;
+  int id;
+  final String description;
   final Relevance relevance;
   bool isCompleted;
-  final DateTime? date;
+  final String? date;
   TaskWidgetConfiguration({
-    required this.index,
+    required this.id,
     required this.isCompleted,
     required this.relevance,
-    required this.task,
+    required this.description,
     required this.date,
   });
 }
@@ -42,13 +41,14 @@ class TaskRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)?.model;
+    final model = MainScreenModelProvider.watch(context)!.model;
     return ClipRRect(
       borderRadius: BorderRadius.only(
+        // TODO change cliprrect for the first element
         topLeft:
-            configuration.index == 0 ? const Radius.circular(10) : Radius.zero,
+            configuration.id == 0 ? const Radius.circular(10) : Radius.zero,
         topRight:
-            configuration.index == 0 ? const Radius.circular(10) : Radius.zero,
+            configuration.id == 0 ? const Radius.circular(10) : Radius.zero,
       ),
       child: Dismissible(
         background: Container(
@@ -77,13 +77,13 @@ class TaskRowWidget extends StatelessWidget {
             ],
           ),
         ),
-        key: ValueKey(configuration.index),
+        key: ValueKey(configuration.id),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
-            model!.finishTask(configuration.index, TaskRowWidget);
+            model.changeTaskState(configuration.id, TaskRowWidget);
             return false;
           } else {
-            model!.deleteTask(configuration.index, TaskRowWidget);
+            model.deleteTask(configuration.id, TaskRowWidget);
             return false;
           }
         },
@@ -133,7 +133,7 @@ class TaskRowWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
-                        configuration.task,
+                        configuration.description,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -152,7 +152,7 @@ class TaskRowWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          '${configuration.date!.day} ${Date.getMonth(configuration.date!.month)} ${configuration.date!.year}',
+                          configuration.date!,
                           style:
                               TextStyle(color: ToDoListTheme.taskRowDateColor),
                         ),
@@ -165,18 +165,13 @@ class TaskRowWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 18),
                 constraints: const BoxConstraints(),
                 onPressed: () async {
-                  final result =
+                  bool? update =
                       await NavigationManager.instance.openInfo(configuration);
-                  if (result != null) {
-                    if (result[1] == true) {
-                      model!.deleteTask(configuration.index, TaskRowWidget);
+                  if (update != null) {
+                    if (update == true) {
+                      await model.deleteTask(configuration.id, TaskRowWidget);
                     } else {
-                      model!.changeTask(
-                        configuration: result[0] as TaskWidgetConfiguration,
-                        completed: configuration.isCompleted,
-                        index: configuration.index,
-                        type: TaskRowWidget,
-                      );
+                      await model.updateTaskList(TaskRowWidget);
                     }
                   }
                 },

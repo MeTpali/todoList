@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_school/navigation/navigation.dart';
 import 'package:todo_list_school/ui/theme/theme.dart';
 import 'package:todo_list_school/ui/widgets/main_screen/main_screen_widget_model.dart';
-import 'package:todo_list_school/ui/widgets/task_row/task_row_widget.dart';
-
-import '../../localization/s.dart';
+import 'package:todo_list_school/ui/localization/s.dart';
 
 class MainScreenWidget extends StatefulWidget {
   const MainScreenWidget({super.key});
@@ -52,11 +50,9 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
   }
 
   Future<void> _openTaskForm() async {
-    final result = await NavigationManager.instance.openTaskForm();
-    if (result != null) {
-      _model.addTask(
-          configuration: result[0] as TaskWidgetConfiguration,
-          type: MainScreenWidget);
+    bool? update = await NavigationManager.instance.openTaskForm();
+    if (update != null && update) {
+      await _model.updateTaskList(MainScreenWidget);
     }
   }
 }
@@ -97,12 +93,12 @@ class CompletedWidget extends StatelessWidget {
                   constraints: const BoxConstraints(),
                   icon: Icon(
                     model.showCompleted
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                   color: ToDoListTheme.mainScreenEyeColor,
                   splashColor: Colors.transparent,
-                  onPressed: () => model.changeTaskList(CompletedWidget),
+                  onPressed: () => model.changeTaskList(BuildAppBar),
                 ),
               ],
             ),
@@ -113,12 +109,25 @@ class CompletedWidget extends StatelessWidget {
   }
 }
 
-class TasksWidget extends StatelessWidget {
+class TasksWidget extends StatefulWidget {
   const TasksWidget({super.key});
+
+  @override
+  State<TasksWidget> createState() => _TasksWidgetState();
+}
+
+class _TasksWidgetState extends State<TasksWidget> {
+  @override
+  void initState() {
+    super.initState();
+    final model = MainScreenModelProvider.read(context)!.model;
+    model.updateTaskList(TasksWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)?.model;
-    final tasks = model!.getTasks();
+    final model = MainScreenModelProvider.watch(context)!.model;
+    final tasks = model.taskList;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 0, 8, 15),
@@ -133,16 +142,7 @@ class TasksWidget extends StatelessWidget {
                 children: tasks,
               ),
               TextButton(
-                onPressed: () async {
-                  final result =
-                      await NavigationManager.instance.openTaskForm();
-                  if (result != null) {
-                    model.addTask(
-                      configuration: result[0] as TaskWidgetConfiguration,
-                      type: TasksWidget,
-                    );
-                  }
-                },
+                onPressed: () => _openTaskForm(model),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 50),
                   child: Row(
@@ -164,6 +164,13 @@ class TasksWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _openTaskForm(MainScreenModel model) async {
+    bool? update = await NavigationManager.instance.openTaskForm();
+    if (update != null && update) {
+      await model.updateTaskList(TasksWidget);
+    }
   }
 }
 
@@ -239,7 +246,7 @@ class BuildAppBar extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(0, 0, 19, 14),
               constraints: const BoxConstraints(),
               icon: Icon(
-                model!.showCompleted ? Icons.visibility : Icons.visibility_off,
+                model!.showCompleted ? Icons.visibility_off : Icons.visibility,
               ),
               color: ToDoListTheme.mainScreenEyeColor,
               splashColor: Colors.transparent,

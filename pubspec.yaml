@@ -33,6 +33,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   logger: ^1.4.0
+  # intl: ^0.18.1
+  sqflite: ^2.2.8+4
+  path_provider: ^2.0.15
+  # flutter_secure_storage: ^8.0.0
+  connectivity_plus: ^3.0.3
+  permission_handler: ^10.2.0
+  dio: ^5.2.1+1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,6 +57,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   very_good_analysis: ^5.0.0+1
+  build_runner: ^2.4.5
+  json_serializable: ^6.7.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
