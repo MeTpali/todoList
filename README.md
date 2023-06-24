@@ -1,16 +1,19 @@
-# todo_list_school
+This is a to-do list
+Link to the APK:
+https://drive.google.com/drive/folders/1Vuo4CxhAh_s7tFe8DktpIjsKs4eglk4b?usp=sharing
 
-A new Flutter project.
+Implemented features:
+- light and dark themes depending on the application settings
+- localization for Russian and English languages
+- adding/removing tasks with the ability to select their importance and date
+- editing tasks
 
-## Getting Started
+Это список дел
+Ссылка на апк:
+https://drive.google.com/drive/folders/1Vuo4CxhAh_s7tFe8DktpIjsKs4eglk4b?usp=sharing
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Реализованные фичи:
+ - светлая и тёмная темы в зависимости от настроек приложения
+ - локализация для русского и английского языков
+ - добавление/удаление задач с возможностью выбора их важности и даты
+ - редактирование задач
