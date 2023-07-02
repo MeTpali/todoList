@@ -1,33 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_school/navigation/navigation.dart';
 import 'package:todo_list_school/ui/theme/theme.dart';
-import 'package:todo_list_school/ui/widgets/main_screen/main_screen_widget_model.dart';
+import 'package:todo_list_school/ui/widgets/main_screen/main_screen_bloc.dart';
 import 'package:todo_list_school/ui/localization/s.dart';
 
-class MainScreenWidget extends StatefulWidget {
+class MainScreenWidget extends StatelessWidget {
   const MainScreenWidget({super.key});
 
   @override
-  State<MainScreenWidget> createState() => _MainScreenWidgetState();
-}
-
-class _MainScreenWidgetState extends State<MainScreenWidget> {
-  late final MainScreenModel _model;
-
-  @override
-  void initState() {
-    super.initState();
-    _model = MainScreenModel();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final model = _model;
-    return Scaffold(
-      backgroundColor: ToDoListTheme.mainScreenScaffoldColor,
-      body: MainScreenModelProvider(
-        model: model,
-        child: const CustomScrollView(
+    // final model = _model;
+    return BlocProvider(
+      create: (context) => MainScreenBloc(const MainScreenState.inital()),
+      child: Scaffold(
+        backgroundColor: ToDoListTheme.mainScreenScaffoldColor,
+        body: const CustomScrollView(
           slivers: [
             SliverPersistentHeader(
               delegate: CustomSliverAppBarDelegate(expandedHeight: 120),
@@ -37,23 +25,22 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
             TasksWidget(),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openTaskForm,
-        backgroundColor: ToDoListTheme.floatingActionButtonBackgroundColor,
-        child: Icon(
-          Icons.add,
-          color: ToDoListTheme.floatingActionButtonIconColor,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final bloc = context.read<MainScreenBloc>();
+            bool? update = await NavigationManager.instance.openTaskForm();
+            if (update != null && update) {
+              bloc.add(MainScreenTaskListUpdate());
+            }
+          },
+          backgroundColor: ToDoListTheme.floatingActionButtonBackgroundColor,
+          child: Icon(
+            Icons.add,
+            color: ToDoListTheme.floatingActionButtonIconColor,
+          ),
         ),
       ),
     );
-  }
-
-  Future<void> _openTaskForm() async {
-    bool? update = await NavigationManager.instance.openTaskForm();
-    if (update != null && update) {
-      await _model.updateTaskList(MainScreenWidget);
-    }
   }
 }
 
@@ -62,7 +49,7 @@ class CompletedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)?.model;
+    final bloc = context.watch<MainScreenBloc>();
     return SliverList(
       delegate: SliverChildListDelegate(
         [
@@ -78,7 +65,7 @@ class CompletedWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "${S.of(context).get("done")} — ${model!.completedTasks}",
+                        "${S.of(context).get("done")} — ${bloc.state.taskListContainer.completedTasks}",
                         style: TextStyle(
                           color: ToDoListTheme.mainScreenCompletedColor,
                           fontWeight: FontWeight.bold,
@@ -92,13 +79,13 @@ class CompletedWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 25),
                   constraints: const BoxConstraints(),
                   icon: Icon(
-                    model.showCompleted
+                    bloc.state.showCompleted
                         ? Icons.visibility_off
                         : Icons.visibility,
                   ),
                   color: ToDoListTheme.mainScreenEyeColor,
                   splashColor: Colors.transparent,
-                  onPressed: () => model.changeTaskList(BuildAppBar),
+                  onPressed: () => bloc.add(MainScreenSwitchCompleted()),
                 ),
               ],
             ),
@@ -109,25 +96,12 @@ class CompletedWidget extends StatelessWidget {
   }
 }
 
-class TasksWidget extends StatefulWidget {
+class TasksWidget extends StatelessWidget {
   const TasksWidget({super.key});
 
   @override
-  State<TasksWidget> createState() => _TasksWidgetState();
-}
-
-class _TasksWidgetState extends State<TasksWidget> {
-  @override
-  void initState() {
-    super.initState();
-    final model = MainScreenModelProvider.read(context)!.model;
-    model.updateTaskList(TasksWidget);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)!.model;
-    final tasks = model.taskList;
+    final bloc = context.watch<MainScreenBloc>();
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 0, 8, 15),
@@ -139,10 +113,10 @@ class _TasksWidgetState extends State<TasksWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
-                children: tasks,
+                children: bloc.state.taskListContainer.tasks,
               ),
               TextButton(
-                onPressed: () => _openTaskForm(model),
+                onPressed: () => _openTaskForm(bloc),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 50),
                   child: Row(
@@ -166,10 +140,10 @@ class _TasksWidgetState extends State<TasksWidget> {
     );
   }
 
-  Future<void> _openTaskForm(MainScreenModel model) async {
+  Future<void> _openTaskForm(MainScreenBloc bloc) async {
     bool? update = await NavigationManager.instance.openTaskForm();
     if (update != null && update) {
-      await model.updateTaskList(TasksWidget);
+      bloc.add(MainScreenTaskListUpdate());
     }
   }
 }
@@ -211,7 +185,7 @@ class BuildAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)?.model;
+    final bloc = context.watch<MainScreenBloc>();
     return Material(
       color: ToDoListTheme.mainScreenAppBarColor,
       elevation: 4 * shrinkOffset / expandedHeight,
@@ -246,12 +220,15 @@ class BuildAppBar extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(0, 0, 19, 14),
               constraints: const BoxConstraints(),
               icon: Icon(
-                model!.showCompleted ? Icons.visibility_off : Icons.visibility,
+                bloc.state.showCompleted
+                    ? Icons.visibility_off
+                    : Icons.visibility,
               ),
               color: ToDoListTheme.mainScreenEyeColor,
               splashColor: Colors.transparent,
               onPressed: appear(shrinkOffset) == 1
-                  ? () => model.changeTaskList(BuildAppBar)
+                  ? () => bloc.add(
+                      MainScreenSwitchCompleted()) // model.changeTaskList(BuildAppBar)
                   : () {},
             ),
           ),

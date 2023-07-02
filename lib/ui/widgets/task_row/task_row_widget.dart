@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_school/navigation/navigation.dart';
 import 'package:todo_list_school/ui/theme/theme.dart';
-import 'package:todo_list_school/ui/widgets/main_screen/main_screen_widget_model.dart';
+import 'package:todo_list_school/ui/widgets/main_screen/main_screen_bloc.dart';
 
 enum Relevance {
   none,
@@ -41,7 +41,7 @@ class TaskRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MainScreenModelProvider.watch(context)!.model;
+    final bloc = context.watch<MainScreenBloc>();
     return ClipRRect(
       borderRadius: BorderRadius.only(
         // TODO change cliprrect for the first element
@@ -80,10 +80,10 @@ class TaskRowWidget extends StatelessWidget {
         key: ValueKey(configuration.id),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
-            model.changeTaskState(configuration.id, TaskRowWidget);
+            bloc.add(MainScreenChangeTaskState(id: configuration.id));
             return false;
           } else {
-            model.deleteTask(configuration.id, TaskRowWidget);
+            bloc.add(MainScreenDeleteTask(id: configuration.id));
             return false;
           }
         },
@@ -169,9 +169,9 @@ class TaskRowWidget extends StatelessWidget {
                       await NavigationManager.instance.openInfo(configuration);
                   if (update != null) {
                     if (update == true) {
-                      await model.deleteTask(configuration.id, TaskRowWidget);
+                      bloc.add(MainScreenDeleteTask(id: configuration.id));
                     } else {
-                      await model.updateTaskList(TaskRowWidget);
+                      bloc.add(MainScreenTaskListUpdate());
                     }
                   }
                 },

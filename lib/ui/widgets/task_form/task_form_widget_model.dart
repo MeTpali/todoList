@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_school/db/database_helper.dart';
-import 'package:todo_list_school/domain/api_client.dart';
+import 'package:todo_list_school/domain/api_client/api_client.dart';
 import 'package:todo_list_school/logging/logging.dart';
 import 'package:todo_list_school/navigation/navigation.dart';
 import '../../theme/theme.dart';
