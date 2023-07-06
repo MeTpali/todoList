@@ -20,8 +20,6 @@ Implemented features:
  - редактирование задач
  - добавлено сохранение задач на устройстве и в удалённой базе данных
 
-Скриншоты:
-![фото 1](https://github.com/MeTpali/todoList/assets/108015452/1dcf1f4d-9392-417a-bdca-751fee4293ee)
-![фото 2](https://github.com/MeTpali/todoList/assets/108015452/f5ae970c-e059-4624-aeb1-5d11e56dbfda)
-![фото 4](https://github.com/MeTpali/todoList/assets/108015452/96232f10-1cc2-4349-8f3d-bed3c5233732)
-![фото 3](https://github.com/MeTpali/todoList/assets/108015452/3aed0592-c3dd-41d8-850b-bfee198faa4b)
+| 1 screenshot  | 2 screenshot  | 3 screenshot  | 4 screenshot  |
+| ------------- | ------------- |
+| ![фото 1](https://github.com/MeTpali/todoList/assets/108015452/1dcf1f4d-9392-417a-bdca-751fee4293ee) | ![фото 2](https://github.com/MeTpali/todoList/assets/108015452/f5ae970c-e059-4624-aeb1-5d11e56dbfda)  | ![фото 3](https://github.com/MeTpali/todoList/assets/108015452/3aed0592-c3dd-41d8-850b-bfee198faa4b)  | ![фото 4](https://github.com/MeTpali/todoList/assets/108015452/96232f10-1cc2-4349-8f3d-bed3c5233732)  |
